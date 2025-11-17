@@ -10,12 +10,16 @@
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
     if (code) {
-      document.write("<b>Код авторизации:</b> " + code);
-      // Можно здесь сделать редирект в ваше приложение через кастомный URI:
-      // location.href = 'myapp://callback?code=' + code;
+        document.write("<b>Код авторизации:</b> " + code + "<br>Перенаправляем в приложение...");
+        // 1. Даем пользователю увидеть сообщение (опционально, 1 секунду)
+        setTimeout(function() {
+            // 2. Перенаправляем в приложение через кастомную схему
+            window.location.href = "myapp://callback?code=" + encodeURIComponent(code);
+        }, 1000);
     } else {
-      document.write("Код не найден.");
+        document.write("Код не найден.");
     }
 </script>
 </body>
 </html>
+
