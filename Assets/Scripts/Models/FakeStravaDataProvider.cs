@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using DefaultNamespace;
+using DefaultNamespace.UI;
 using Newtonsoft.Json;
 using StravaData;
 using UnityEngine;
@@ -13,18 +15,31 @@ namespace Models
             return Resources.Load<TextAsset>(path).text;
         }
 
-        public async Awaitable<long[]> GetActivityIds(string url, string token)
+        public async Awaitable<ActivityAttributes[]> GetActivitiesAttributes(string url, string token)
         {
             var activitiesJson = GetFakeData("activities");
-            var stravaActivities = JsonConvert.DeserializeObject<List<StravaActivity>>(activitiesJson);
-            var IDs = new long[stravaActivities.Count];
 
-            for (int i = 0; i < stravaActivities.Count; i++)
+            try
             {
-                IDs[i] = stravaActivities[i].Id;
-            }
+                var stravaActivities = JsonConvert.DeserializeObject<List<StravaActivity>>(activitiesJson);
+                var activityAttributes = new ActivityAttributes[stravaActivities.Count];
 
-            return IDs;
+                for (int i = 0; i < stravaActivities.Count; i++)
+                {
+                    var activity =
+                        stravaActivities
+                            [i]; //string date, string name, string distance, string elapsed, string location
+                    activityAttributes[i] = new ActivityAttributes(activity.Id, activity.StartDate, activity.Name,
+                        activity.Distance, activity.ElapsedTime, "Los Altos Hills");
+                }
+
+                return activityAttributes;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                throw;
+            }
         }
 
         async Awaitable<GeoData[]> IDataProvider.GetActivityGeoData(string url, string token)

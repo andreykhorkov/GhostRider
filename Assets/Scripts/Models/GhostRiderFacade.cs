@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Text;
+using DefaultNamespace.EventArgs;
+using MiscTools;
 using Models;
 using UnityEngine;
 using Zenject;
@@ -8,6 +10,7 @@ namespace DefaultNamespace
 {
     public class GhostRiderFacade : IInitializable, IDisposable
     {
+        private readonly Dispatcher m_Dispatcher;
         private readonly IAuthenticator m_Authenticator;
         private readonly IDataProvider m_DataProvider;
 
@@ -15,8 +18,9 @@ namespace DefaultNamespace
 
         private string m_AccessToken;
 
-        public GhostRiderFacade(IAuthenticator authenticator, IDataProvider dataProvider)
+        public GhostRiderFacade(Dispatcher dispatcher, IAuthenticator authenticator, IDataProvider dataProvider)
         {
+            m_Dispatcher = dispatcher;
             m_Authenticator = authenticator;
             m_DataProvider = dataProvider;
         }
@@ -26,7 +30,7 @@ namespace DefaultNamespace
             if (!string.IsNullOrEmpty(m_Authenticator.AbsoluteUrl))
             {
                 OnDeepLinkActivated(m_Authenticator.AbsoluteUrl);
-                Init();
+                GetActivities();
             }
             else
             {
@@ -47,14 +51,15 @@ namespace DefaultNamespace
             m_AccessToken = await m_Authenticator.ExchangeCodeForToken(code);
         }
 
-        private async Awaitable Init()
+        private async Awaitable GetActivities()
         {
-            var Ids = await m_DataProvider.GetActivityIds(
+            var activitiesAttributes = await m_DataProvider.GetActivitiesAttributes(
                 "https://www.strava.com/api/v3/athlete/activities?page=1&per_page=1", m_AccessToken);
+            m_Dispatcher.Send(EventId.ActivityIdsRetrieved, new ActivitiesAttributesEventArgs(activitiesAttributes));
 
             var sbb = new StringBuilder();
 
-            foreach (var id in Ids)
+            foreach (var id in activitiesAttributes)
             {
                 sbb.Append($"{id}, ");
             }

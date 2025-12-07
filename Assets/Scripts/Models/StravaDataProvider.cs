@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DefaultNamespace;
+using DefaultNamespace.UI;
 using Newtonsoft.Json;
 using StravaData;
 using UnityEngine;
@@ -19,7 +20,7 @@ namespace Models
         async Awaitable<GeoData[]> IDataProvider.GetActivityGeoData(string url, string token)
         {
             var streamsJson = await m_StravaActivityDataLoader.GetActivityData(
-                url, new Tuple<string, string>[]{ new("Authorization", $"Bearer {token}") });
+                url, new Tuple<string, string>[] { new("Authorization", $"Bearer {token}") });
             var streams = JsonConvert.DeserializeObject<ActivityStreams>(streamsJson);
 
             if (streams.LatLng.OriginalSize != streams.Altitude.OriginalSize
@@ -43,19 +44,29 @@ namespace Models
             return geoData;
         }
 
-        async Awaitable<long[]> IDataProvider.GetActivityIds(string url, string token)
+        async Awaitable<ActivityAttributes[]> IDataProvider.GetActivitiesAttributes(string url, string token)
         {
             var activitiesJson = await m_StravaActivityDataLoader.GetActivityData(
-                url, new Tuple<string, string>[]{ new("Authorization", $"Bearer {token}") });
-            var stravaActivities = JsonConvert.DeserializeObject<List<StravaActivity>>(activitiesJson);
-            var IDs = new long[stravaActivities.Count];
-
-            for (int i = 0; i < stravaActivities.Count; i++)
+                url, new Tuple<string, string>[] { new("Authorization", $"Bearer {token}") });
+            try
             {
-                IDs[i] = stravaActivities[i].Id;
-            }
+                var stravaActivities = JsonConvert.DeserializeObject<List<StravaActivity>>(activitiesJson);
+                var activityAttributes = new ActivityAttributes[stravaActivities.Count];
 
-            return IDs;
+                for (int i = 0; i < stravaActivities.Count; i++)
+                {
+                    var activity = stravaActivities[i];
+                    activityAttributes[i] = new ActivityAttributes(activity.Id, activity.StartDate, activity.Name,
+                        activity.Distance, activity.ElapsedTime, "Los Altos Hills");
+                }
+
+                return activityAttributes;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                throw;
+            }
         }
     }
 }

@@ -2,6 +2,6 @@
 {
     public enum EventId
     {
-        BallWasHit
+        ActivityIdsRetrieved
     }
 }
