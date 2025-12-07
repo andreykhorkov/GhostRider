@@ -1,23 +1,37 @@
 ﻿using DefaultNamespace.EventArgs;
 using MiscTools;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace DefaultNamespace.UI
 {
     public class ActivitiesMenu
     {
         private readonly ActivityMenuRow.Factory m_ActivityRowFactory;
+        private readonly Button m_MenuBtn;
+        private readonly GameObject m_MenuObj;
         private readonly Dispatcher m_Dispatcher;
 
-        public ActivitiesMenu(Dispatcher dispatcher, ActivityMenuRow.Factory activityRowFactory)
+        public ActivitiesMenu(Dispatcher dispatcher, ActivityMenuRow.Factory activityRowFactory,
+            ActivitiesMenuInstallables installables)
         {
             m_ActivityRowFactory = activityRowFactory;
+            m_MenuBtn = installables.activityMenuBtn;
+            m_MenuObj = installables.activityMenuObject;
             m_Dispatcher = dispatcher;
             m_Dispatcher.Subscribe(EventId.ActivityIdsRetrieved, OnActivityIdsRetrieved);
+            m_MenuBtn.onClick.AddListener(OnMenuBtnClick);
         }
 
         ~ActivitiesMenu()
         {
             m_Dispatcher.Unsubscribe(EventId.ActivityIdsRetrieved, OnActivityIdsRetrieved);
+            m_MenuBtn.onClick.RemoveListener(OnMenuBtnClick);
+        }
+
+        private void OnMenuBtnClick()
+        {
+            m_MenuObj.SetActive(!m_MenuObj.activeInHierarchy);
         }
 
         private void OnActivityIdsRetrieved(System.EventArgs args)

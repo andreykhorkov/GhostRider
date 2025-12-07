@@ -1,7 +1,5 @@
 ﻿using System;
-using UnityEngine;
 using Zenject;
-using Object = UnityEngine.Object;
 
 namespace DefaultNamespace.UI
 {
@@ -27,21 +25,20 @@ namespace DefaultNamespace.UI
 
     public class ActivitiesMenuInstaller : Installer<ActivitiesMenuInstaller>
     {
-        private readonly Object m_ActivityRowPrefab;
-        private readonly Transform m_ActivityRowParent;
+        private readonly ActivitiesMenuInstallables m_ActivityMenuInstallables;
 
-        public ActivitiesMenuInstaller(Object activityRowPrefab, Transform activityRowParent)
+        public ActivitiesMenuInstaller(ActivitiesMenuInstallables activityMenuInstallables)
         {
-            m_ActivityRowPrefab = activityRowPrefab;
-            m_ActivityRowParent = activityRowParent;
+            m_ActivityMenuInstallables = activityMenuInstallables;
         }
 
         public override void InstallBindings()
         {
             Container.Bind<ActivitiesMenu>().AsSingle();
+            Container.BindInstance(m_ActivityMenuInstallables).AsSingle();
             Container.BindFactory<ActivityAttributes, ActivityMenuRow, ActivityMenuRow.Factory>()
-                .FromSubContainerResolve().ByNewPrefabInstaller<ActivityMenuRowInstaller>(m_ActivityRowPrefab)
-                .UnderTransform(m_ActivityRowParent);
+                .FromSubContainerResolve().ByNewPrefabInstaller<ActivityMenuRowInstaller>
+                    (m_ActivityMenuInstallables.activitiesRowPrefab).UnderTransform(m_ActivityMenuInstallables.activityRowParent);
         }
     }
 }
