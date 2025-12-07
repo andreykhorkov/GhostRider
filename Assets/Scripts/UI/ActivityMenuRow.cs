@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using DefaultNamespace.EventArgs;
+using MiscTools;
+using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
@@ -8,16 +10,19 @@ namespace DefaultNamespace.UI
     {
         private readonly long m_ActivityId;
         private readonly Button m_Button;
+        private readonly Dispatcher m_Dispatcher;
 
-        public ActivityMenuRow(ActivityMenuRowView view, ActivityAttributes rowAttributes, Button button)
+        public ActivityMenuRow(ActivityMenuRowView view, ActivityAttributes rowAttributes, Button button,
+            Dispatcher dispatcher)
         {
-            view.DateLbl.text = rowAttributes.Date.ToString("dd/MM/yyyy");;
+            view.DateLbl.text = rowAttributes.Date.ToString("dd/MM/yyyy");
             view.DistanceLbl.text = MetersToKilometers(rowAttributes.Distance).ToString("F2");
             view.ElapsedLbl.text = SecondsToHoursMin(rowAttributes.Elapsed);
             view.LocationLbl.text = rowAttributes.Location;
             view.NameLbl.text = rowAttributes.Name;
             m_ActivityId = rowAttributes.Id;
             m_Button = button;
+            m_Dispatcher = dispatcher;
             m_Button.onClick.AddListener(OnElementClicked);
         }
 
@@ -28,6 +33,7 @@ namespace DefaultNamespace.UI
 
         private void OnElementClicked()
         {
+            m_Dispatcher.Send(EventId.ActivityLoadClicked, new LoadActivityEventArgs(m_ActivityId));
             Debug.Log(m_ActivityId);
         }
 

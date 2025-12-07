@@ -38,6 +38,7 @@ namespace DefaultNamespace
             }
 
             Application.deepLinkActivated += OnDeepLinkActivated;
+            m_Dispatcher.Subscribe(EventId.ActivityLoadClicked, OnActivityLoadClicked);
         }
 
         void IDisposable.Dispose()
@@ -49,6 +50,26 @@ namespace DefaultNamespace
         {
             var code = m_Authenticator.RetrieveExchangeCode();
             m_AccessToken = await m_Authenticator.ExchangeCodeForToken(code);
+        }
+
+        private void OnActivityLoadClicked(System.EventArgs args)
+        {
+            var eventArgs = (LoadActivityEventArgs)args;
+            var activityId = eventArgs.ActivityId;
+            LoadActivityInfo(activityId);
+        }
+
+        private async Awaitable LoadActivityInfo(long activityId)
+        {
+            var activityGeoData = await m_DataProvider.GetActivityGeoData($"{activityId}", m_AccessToken);
+            var sb = new StringBuilder();
+
+            foreach (var data in activityGeoData)
+            {
+                sb.Append($"{data}, ");
+            }
+
+            Debug.Log(sb);
         }
 
         private async Awaitable GetActivities()
