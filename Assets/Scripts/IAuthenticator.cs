@@ -2,9 +2,11 @@
 
 namespace DefaultNamespace
 {
-    public interface IAthenticator
+    public interface IAuthenticator
     {
         void Authorize(string clientId);
         Awaitable<string> ExchangeCodeForToken(string code);
+        string RetrieveExchangeCode();
+        string AbsoluteUrl { get; }
     }
 }

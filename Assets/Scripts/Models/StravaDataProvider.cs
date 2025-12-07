@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using DefaultNamespace;
 using Newtonsoft.Json;
 using StravaData;
@@ -8,36 +9,22 @@ namespace Models
 {
     public class StravaDataProvider : IDataProvider
     {
-        private readonly IActivityLoader m_ActivityLoader;
+        private readonly IActivityLoader m_StravaActivityDataLoader;
 
-        public StravaDataProvider(IActivityLoader activityLoader)
+        public StravaDataProvider(IActivityLoader stravaActivityDataLoader)
         {
-            m_ActivityLoader = activityLoader;
+            m_StravaActivityDataLoader = stravaActivityDataLoader;
         }
 
-        public async Awaitable<long[]> GetActivityIds()
+        async Awaitable<GeoData[]> IDataProvider.GetActivityGeoData(string url, string token)
         {
-            var activitiesJson = await m_ActivityLoader.GetActivityData("activities");
-            var stravaActivities = JsonConvert.DeserializeObject<List<StravaActivity>>(activitiesJson);
-            var IDs = new long[stravaActivities.Count];
-
-            for (int i = 0; i < stravaActivities.Count; i++)
-            {
-                IDs[i] = stravaActivities[i].Id;
-            }
-
-            return IDs;
-        }
-
-        async Awaitable<GeoData[]> IDataProvider.GetActivityGeoData()
-        {
-            var streamsJson = await m_ActivityLoader.GetActivityData("activity_streams");
+            var streamsJson = await m_StravaActivityDataLoader.GetActivityData(
+                url, new Tuple<string, string>[]{ new("Authorization", $"Bearer {token}") });
             var streams = JsonConvert.DeserializeObject<ActivityStreams>(streamsJson);
 
             if (streams.LatLng.OriginalSize != streams.Altitude.OriginalSize
                 && streams.LatLng.OriginalSize != streams.Time.OriginalSize)
             {
-                Debug.LogError("sds");
                 return null;
             }
 
@@ -54,6 +41,21 @@ namespace Models
             }
 
             return geoData;
+        }
+
+        async Awaitable<long[]> IDataProvider.GetActivityIds(string url, string token)
+        {
+            var activitiesJson = await m_StravaActivityDataLoader.GetActivityData(
+                url, new Tuple<string, string>[]{ new("Authorization", $"Bearer {token}") });
+            var stravaActivities = JsonConvert.DeserializeObject<List<StravaActivity>>(activitiesJson);
+            var IDs = new long[stravaActivities.Count];
+
+            for (int i = 0; i < stravaActivities.Count; i++)
+            {
+                IDs[i] = stravaActivities[i].Id;
+            }
+
+            return IDs;
         }
     }
 }

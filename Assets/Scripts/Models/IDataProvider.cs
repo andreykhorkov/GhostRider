@@ -4,7 +4,7 @@ namespace Models
 {
     public interface IDataProvider
     {
-        Awaitable<GeoData[]> GetActivityGeoData();
-        Awaitable<long[]> GetActivityIds();
+        Awaitable<GeoData[]> GetActivityGeoData(string url, string token);
+        Awaitable<long[]> GetActivityIds(string url, string token);
     }
 }
