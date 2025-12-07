@@ -1,4 +1,5 @@
-﻿using Zenject;
+﻿using MiscTools;
+using Zenject;
 
 namespace DefaultNamespace
 {
@@ -7,6 +8,7 @@ namespace DefaultNamespace
         public override void InstallBindings()
         {
             Container.Bind<HttpManager>().AsSingle();
+            Container.Bind<Dispatcher>().AsSingle();
         }
     }
 }
