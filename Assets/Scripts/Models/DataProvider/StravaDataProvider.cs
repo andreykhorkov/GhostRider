@@ -33,12 +33,11 @@ namespace Models
 
             for (int i = 0; i < streams.LatLng.OriginalSize; i++)
             {
-                var pos = new Vector3(
-                    (float)streams.LatLng.Data[i][0],
-                    (float)streams.LatLng.Data[i][1],
-                    streams.Altitude.Data[i]);
+                var lat = streams.LatLng.Data[i][0];
+                var lon = streams.LatLng.Data[i][1];
+                var alt = streams.Altitude.Data[i];
                 var time = streams.Time.Data[i];
-                geoData[i] = new GeoData(pos, time);
+                geoData[i] = new GeoData(lat, lon, alt, time);
             }
 
             return geoData;
