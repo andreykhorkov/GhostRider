@@ -3,6 +3,7 @@
     public enum EventId
     {
         ActivityIdsRetrieved,
-        ActivityLoadClicked
+        ActivityLoadClicked,
+        ActivityTrackCreated
     }
 }

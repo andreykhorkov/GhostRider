@@ -19,14 +19,22 @@ namespace DefaultNamespace.UI
             m_MenuBtn = installables.activityMenuBtn;
             m_MenuObj = installables.activityMenuObject;
             m_Dispatcher = dispatcher;
+
             m_Dispatcher.Subscribe(EventId.ActivityIdsRetrieved, OnActivityIdsRetrieved);
+            m_Dispatcher.Subscribe(EventId.ActivityTrackCreated, OnActivityTrackCreated);
             m_MenuBtn.onClick.AddListener(OnMenuBtnClick);
         }
 
         ~ActivitiesMenu()
         {
             m_Dispatcher.Unsubscribe(EventId.ActivityIdsRetrieved, OnActivityIdsRetrieved);
+            m_Dispatcher.Unsubscribe(EventId.ActivityTrackCreated, OnActivityTrackCreated);
             m_MenuBtn.onClick.RemoveListener(OnMenuBtnClick);
+        }
+
+        private void OnActivityTrackCreated(System.EventArgs _)
+        {
+            m_MenuObj.SetActive(false);
         }
 
         private void OnMenuBtnClick()

@@ -10,6 +10,7 @@ namespace DefaultNamespace
     {
         [SerializeField] private bool m_IsFake;
         [SerializeField] private Material m_WaypointMaterial;
+        [SerializeField] private LineRenderer m_LineRenderer;
 
         public override void InstallBindings()
         {
@@ -18,6 +19,7 @@ namespace DefaultNamespace
             Container.BindInterfacesTo<TrackRenderer>().AsSingle();
             Container.BindInterfacesTo<EnuConverter>().AsSingle();
             Container.BindInstance(m_WaypointMaterial);
+            Container.BindInstance(m_LineRenderer);
 
             if (m_IsFake)
             {
