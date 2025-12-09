@@ -6,6 +6,7 @@ using MiscTools;
 using Models;
 using UnityEngine;
 using Zenject;
+using TrackData = Models.TrackData;
 
 namespace DefaultNamespace
 {
@@ -15,19 +16,23 @@ namespace DefaultNamespace
         private readonly IAuthenticator m_Authenticator;
         private readonly IDataProvider m_DataProvider;
         private readonly ITrackRenderer m_TrackRenderer;
+        private readonly ITrackCreator m_trackCreator;
         private readonly Material m_WaypointMaterial;
+        private readonly TrackFollower.Factory m_TrackFollowerFactory;
 
         private const string m_ClientId = "185672";
 
         private string m_AccessToken;
 
         public GhostRiderFacade(Dispatcher dispatcher, IAuthenticator authenticator, IDataProvider dataProvider,
-            ITrackRenderer trackRenderer)
+            ITrackRenderer trackRenderer, ITrackCreator trackCreator, TrackFollower.Factory trackFollowerFactory)
         {
             m_Dispatcher = dispatcher;
             m_Authenticator = authenticator;
             m_DataProvider = dataProvider;
             m_TrackRenderer = trackRenderer;
+            m_trackCreator = trackCreator;
+            m_TrackFollowerFactory = trackFollowerFactory;
         }
 
         void IInitializable.Initialize()
@@ -57,26 +62,21 @@ namespace DefaultNamespace
             m_AccessToken = await m_Authenticator.ExchangeCodeForToken(code);
         }
 
-        private void OnActivityLoadClicked(System.EventArgs args)
+        private async void OnActivityLoadClicked(System.EventArgs args)
         {
             var eventArgs = (LoadActivityEventArgs)args;
             var activityId = eventArgs.ActivityId;
-            LoadActivityInfo(activityId);
+            var activityGeoData = await LoadActivityInfo(activityId);
+            var trackData = m_trackCreator.CreateTrack(activityGeoData);
+            m_TrackRenderer.CreateTrackTrace(trackData);
+            m_Dispatcher.Send(EventId.ActivityTrackCreated, System.EventArgs.Empty);
+            ITrackFollower ghost = m_TrackFollowerFactory.Create();
+            ghost.SetTrack(trackData);
         }
 
-        private async Awaitable LoadActivityInfo(long activityId)
+        private async Awaitable<TrackData[]> LoadActivityInfo(long activityId)
         {
-            var activityGeoData = await m_DataProvider.GetActivityGeoData($"{activityId}", m_AccessToken);
-            var sb = new StringBuilder();
-
-            foreach (var data in activityGeoData)
-            {
-                sb.Append($"{data}, ");
-            }
-
-            Debug.Log(sb);
-
-            m_TrackRenderer.CreateTrack(activityGeoData);
+            return await m_DataProvider.GetActivityGeoData($"{activityId}", m_AccessToken);
         }
 
         private async Awaitable GetActivities()
@@ -84,15 +84,6 @@ namespace DefaultNamespace
             var activitiesAttributes = await m_DataProvider.GetActivitiesAttributes(
                 "https://www.strava.com/api/v3/athlete/activities?page=1&per_page=1", m_AccessToken);
             m_Dispatcher.Send(EventId.ActivityIdsRetrieved, new ActivitiesAttributesEventArgs(activitiesAttributes));
-
-            var sbb = new StringBuilder();
-
-            foreach (var id in activitiesAttributes)
-            {
-                sbb.Append($"{id}, ");
-            }
-
-            Debug.Log(sbb);
         }
     }
 }

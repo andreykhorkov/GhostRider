@@ -17,7 +17,7 @@ namespace Models
             m_StravaActivityDataLoader = stravaActivityDataLoader;
         }
 
-        async Awaitable<GeoData[]> IDataProvider.GetActivityGeoData(string url, string token)
+        async Awaitable<TrackData[]> IDataProvider.GetActivityGeoData(string url, string token)
         {
             var streamsJson = await m_StravaActivityDataLoader.GetActivityData(
                 url, new Tuple<string, string>[] { new("Authorization", $"Bearer {token}") });
@@ -29,7 +29,7 @@ namespace Models
                 return null;
             }
 
-            var geoData = new GeoData[streams.LatLng.OriginalSize];
+            var geoData = new TrackData[streams.LatLng.OriginalSize];
 
             for (int i = 0; i < streams.LatLng.OriginalSize; i++)
             {
@@ -37,7 +37,7 @@ namespace Models
                 var lon = streams.LatLng.Data[i][1];
                 var alt = streams.Altitude.Data[i];
                 var time = streams.Time.Data[i];
-                geoData[i] = new GeoData(lat, lon, alt, time);
+                geoData[i] = new TrackData(lat, lon, alt, time);
             }
 
             return geoData;

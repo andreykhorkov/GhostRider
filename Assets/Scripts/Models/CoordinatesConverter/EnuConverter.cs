@@ -10,10 +10,10 @@ namespace DefaultNamespace.CoordinatesConverter
         {
             var R = 6378137.0; // Earth radius
 
-            var dLat = (lat - originLat) * Math.PI / 180.0;
-            var dLon = (lon - originLon) * Math.PI / 180.0;
+            var dLat = (lat - originLat) * Mathf.Deg2Rad;
+            var dLon = (lon - originLon) * Mathf.Deg2Rad;
 
-            var x = dLon * R * Math.Cos(originLat * Math.PI / 180.0);   // East
+            var x = dLon * R * Math.Cos(originLat * Mathf.Deg2Rad);     // East, 1 at equator, 0 at poles
             var z = dLat * R;                                           // North
             var y = alt - originAlt;                                    // Up
 

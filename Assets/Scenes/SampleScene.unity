@@ -1005,6 +1005,7 @@ MonoBehaviour:
   m_IsFake: 1
   m_WaypointMaterial: {fileID: 2100000, guid: 66a75b63515d8bc4ba07f33ba0a12164, type: 2}
   m_LineRenderer: {fileID: 78006751}
+  m_FollowerPrefab: {fileID: 8304903186821771035, guid: 3758b6d4b6d4d874298ae629c8811758, type: 3}
 --- !u!114 &1077701868
 MonoBehaviour:
   m_ObjectHideFlags: 0

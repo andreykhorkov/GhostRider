@@ -1,9 +1,7 @@
-﻿using Models;
-
-namespace DefaultNamespace.Track
+﻿namespace DefaultNamespace.Track
 {
     public interface ITrackRenderer
     {
-        void CreateTrack(GeoData[] geoDataPoints);
+        void CreateTrackTrace(TrackData trackData);
     }
 }
