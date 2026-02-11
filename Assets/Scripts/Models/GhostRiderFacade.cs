@@ -37,10 +37,10 @@ namespace DefaultNamespace
 
         void IInitializable.Initialize()
         {
+            Debug.LogError($"url: {m_Authenticator.AbsoluteUrl}");
             if (!string.IsNullOrEmpty(m_Authenticator.AbsoluteUrl))
             {
                 OnDeepLinkActivated(m_Authenticator.AbsoluteUrl);
-                GetActivities();
             }
             else
             {
@@ -60,6 +60,10 @@ namespace DefaultNamespace
         {
             var code = m_Authenticator.RetrieveExchangeCode();
             m_AccessToken = await m_Authenticator.ExchangeCodeForToken(code);
+            Debug.Log($"[authentification]: accessToken: {m_AccessToken}");
+
+
+            await GetActivities();
         }
 
         private async void OnActivityLoadClicked(System.EventArgs args)
@@ -76,13 +80,14 @@ namespace DefaultNamespace
 
         private async Awaitable<TrackData[]> LoadActivityInfo(long activityId)
         {
-            return await m_DataProvider.GetActivityGeoData($"{activityId}", m_AccessToken);
+            return await m_DataProvider.GetActivityGeoData(
+                $"https://www.strava.com/api/v3/activities/{activityId}/streams?keys=latlng,time,altitude&key_by_type=true", m_AccessToken);
         }
 
         private async Awaitable GetActivities()
         {
             var activitiesAttributes = await m_DataProvider.GetActivitiesAttributes(
-                "https://www.strava.com/api/v3/athlete/activities?page=1&per_page=1", m_AccessToken);
+                "https://www.strava.com/api/v3/activities?page=1&per_page=30", m_AccessToken);
             m_Dispatcher.Send(EventId.ActivityIdsRetrieved, new ActivitiesAttributesEventArgs(activitiesAttributes));
         }
     }
