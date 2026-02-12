@@ -18,14 +18,14 @@ namespace DefaultNamespace
         private readonly ITrackRenderer m_TrackRenderer;
         private readonly ITrackCreator m_trackCreator;
         private readonly Material m_WaypointMaterial;
-        private readonly TrackFollower.Factory m_TrackFollowerFactory;
+        private readonly TrackFollower.Pool m_TrackFollowerFactory;
 
         private const string m_ClientId = "185672";
 
         private string m_AccessToken;
 
         public GhostRiderFacade(Dispatcher dispatcher, IAuthenticator authenticator, IDataProvider dataProvider,
-            ITrackRenderer trackRenderer, ITrackCreator trackCreator, TrackFollower.Factory trackFollowerFactory)
+            ITrackRenderer trackRenderer, ITrackCreator trackCreator, TrackFollower.Pool trackFollowerFactory)
         {
             m_Dispatcher = dispatcher;
             m_Authenticator = authenticator;
@@ -37,7 +37,6 @@ namespace DefaultNamespace
 
         void IInitializable.Initialize()
         {
-            Debug.LogError($"url: {m_Authenticator.AbsoluteUrl}");
             if (!string.IsNullOrEmpty(m_Authenticator.AbsoluteUrl))
             {
                 OnDeepLinkActivated(m_Authenticator.AbsoluteUrl);
@@ -74,8 +73,11 @@ namespace DefaultNamespace
             var trackData = m_trackCreator.CreateTrack(activityGeoData);
             m_TrackRenderer.CreateTrackTrace(trackData);
             m_Dispatcher.Send(EventId.ActivityTrackCreated, System.EventArgs.Empty);
-            ITrackFollower ghost = m_TrackFollowerFactory.Create();
+            ITrackFollower ghost = m_TrackFollowerFactory.Spawn();
             ghost.SetTrack(trackData);
+            await Awaitable.WaitForSecondsAsync(1);
+            ITrackFollower ghost2 = m_TrackFollowerFactory.Spawn();
+            ghost2.SetTrack(trackData);
         }
 
         private async Awaitable<TrackData[]> LoadActivityInfo(long activityId)

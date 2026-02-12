@@ -7,7 +7,7 @@ namespace DefaultNamespace.Track
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<TrackFollower>().AsSingle();
+            Container.BindInterfacesTo<TrackFollower>().AsSingle();
             Container.Bind<Transform>().FromComponentOnRoot().AsSingle();
         }
     }

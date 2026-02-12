@@ -22,7 +22,7 @@ namespace DefaultNamespace
             Container.BindInterfacesTo<EnuConverter>().AsSingle();
             Container.BindInstance(m_WaypointMaterial);
             Container.BindInstance(m_LineRenderer);
-            Container.BindFactory<TrackFollower, TrackFollower.Factory>().FromSubContainerResolve()
+            Container.BindMemoryPool<ITrackFollower, TrackFollower.Pool>().FromSubContainerResolve()
                 .ByNewContextPrefab(m_FollowerPrefab);
 
             if (m_IsFake)

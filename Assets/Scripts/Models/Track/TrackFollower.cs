@@ -51,7 +51,11 @@ namespace DefaultNamespace.Track
             m_CurrentWaypointIndex = 0;
         }
 
-        public class Factory : PlaceholderFactory<TrackFollower>
+        // public class Factory : PlaceholderFactory<ITrackFollower>
+        // {
+        // }
+
+        public class Pool : MemoryPool<ITrackFollower>
         {
         }
     }

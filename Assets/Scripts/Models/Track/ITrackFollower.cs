@@ -1,4 +1,7 @@
-﻿namespace DefaultNamespace.Track
+﻿using System;
+using Zenject;
+
+namespace DefaultNamespace.Track
 {
     public interface ITrackFollower
     {

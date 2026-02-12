@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 4972419065910927909}
   - component: {fileID: 6250886840666147853}
   - component: {fileID: 5512326405130396936}
-  - component: {fileID: -8844130136538732984}
-  - component: {fileID: 1078785100823049620}
+  - component: {fileID: -1523590518682184202}
+  - component: {fileID: -4663463519585817285}
   m_Layer: 0
   m_Name: follower
   m_TagString: Untagged
@@ -92,7 +92,19 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &-8844130136538732984
+--- !u!114 &-1523590518682184202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8304903186821771035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83d9f664bfee412f9ed5cc9fd5a1717b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DefaultNamespace.Track.TrackFollowerInstaller
+--- !u!114 &-4663463519585817285
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -106,20 +118,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Zenject::Zenject.GameObjectContext
   _scriptableObjectInstallers: []
   _monoInstallers:
-  - {fileID: 1078785100823049620}
+  - {fileID: -1523590518682184202}
   _installerPrefabs: []
   _findSiblingMonoInstallers: 0
   _autoRun: 1
   _kernel: {fileID: 0}
---- !u!114 &1078785100823049620
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8304903186821771035}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83d9f664bfee412f9ed5cc9fd5a1717b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DefaultNamespace.Track.TrackFollowerInstaller
