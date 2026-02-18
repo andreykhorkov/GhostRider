@@ -2,6 +2,6 @@
 {
     public interface ITrackRenderer
     {
-        void CreateTrackTrace(TrackData trackData);
+        void UpdateTrackTrace(TrackData trackData);
     }
 }

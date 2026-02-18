@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace Models
+﻿namespace Models
 {
     public struct TrackData
     {

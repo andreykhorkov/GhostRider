@@ -17,22 +17,26 @@ namespace DefaultNamespace
         private readonly IDataProvider m_DataProvider;
         private readonly ITrackRenderer m_TrackRenderer;
         private readonly ITrackCreator m_trackCreator;
-        private readonly Material m_WaypointMaterial;
-        private readonly TrackFollower.Pool m_TrackFollowerFactory;
+        private readonly GhostTrackFollower.Pool m_TrackFollowerPool;
+        private readonly ITrackFollower m_SelfTrackFollower;
+
+        private ITrackFollower m_SelfGhost;
 
         private const string m_ClientId = "185672";
 
         private string m_AccessToken;
 
         public GhostRiderFacade(Dispatcher dispatcher, IAuthenticator authenticator, IDataProvider dataProvider,
-            ITrackRenderer trackRenderer, ITrackCreator trackCreator, TrackFollower.Pool trackFollowerFactory)
+            ITrackRenderer trackRenderer, ITrackCreator trackCreator, GhostTrackFollower.Pool trackFollowerPool,
+            ITrackFollower selfTrackFollower)
         {
             m_Dispatcher = dispatcher;
             m_Authenticator = authenticator;
             m_DataProvider = dataProvider;
             m_TrackRenderer = trackRenderer;
             m_trackCreator = trackCreator;
-            m_TrackFollowerFactory = trackFollowerFactory;
+            m_TrackFollowerPool = trackFollowerPool;
+            m_SelfTrackFollower = selfTrackFollower;
         }
 
         void IInitializable.Initialize()
@@ -45,6 +49,8 @@ namespace DefaultNamespace
             {
                 m_Authenticator.Authorize(m_ClientId);
             }
+
+            m_SelfGhost = m_TrackFollowerPool.Spawn();
 
             Application.deepLinkActivated += OnDeepLinkActivated;
             m_Dispatcher.Subscribe(EventId.ActivityLoadClicked, OnActivityLoadClicked);
@@ -61,7 +67,6 @@ namespace DefaultNamespace
             m_AccessToken = await m_Authenticator.ExchangeCodeForToken(code);
             Debug.Log($"[authentification]: accessToken: {m_AccessToken}");
 
-
             await GetActivities();
         }
 
@@ -71,13 +76,11 @@ namespace DefaultNamespace
             var activityId = eventArgs.ActivityId;
             var activityGeoData = await LoadActivityInfo(activityId);
             var trackData = m_trackCreator.CreateTrack(activityGeoData);
-            m_TrackRenderer.CreateTrackTrace(trackData);
+            m_TrackRenderer.UpdateTrackTrace(trackData);
             m_Dispatcher.Send(EventId.ActivityTrackCreated, System.EventArgs.Empty);
-            ITrackFollower ghost = m_TrackFollowerFactory.Spawn();
-            ghost.SetTrack(trackData);
-            await Awaitable.WaitForSecondsAsync(1);
-            ITrackFollower ghost2 = m_TrackFollowerFactory.Spawn();
-            ghost2.SetTrack(trackData);
+
+            m_SelfGhost.SetTrack(trackData);
+            m_SelfTrackFollower.SetTrack(trackData);
         }
 
         private async Awaitable<TrackData[]> LoadActivityInfo(long activityId)

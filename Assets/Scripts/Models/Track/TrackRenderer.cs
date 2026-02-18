@@ -10,9 +10,9 @@ namespace DefaultNamespace.Track
         private readonly LineRenderer m_LineRenderer;
         private readonly Dispatcher m_Dispatcher;
 
-        TrackRenderer(LineRenderer lineRenderer, Dispatcher dispatcher)
+        TrackRenderer(MainInstaller.Installables installables, Dispatcher dispatcher)
         {
-            m_LineRenderer = lineRenderer;
+            m_LineRenderer = installables.m_LineRenderer;
             m_Dispatcher = dispatcher;
         }
 
@@ -20,7 +20,7 @@ namespace DefaultNamespace.Track
         {
         }
 
-        public void CreateTrackTrace(TrackData trackData)
+        public void UpdateTrackTrace(TrackData trackData)
         {
             m_LineRenderer.positionCount = trackData.Waypoints.Length;
             m_LineRenderer.SetPositions(trackData.Waypoints);

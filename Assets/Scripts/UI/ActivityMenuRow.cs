@@ -34,7 +34,6 @@ namespace DefaultNamespace.UI
         private void OnElementClicked()
         {
             m_Dispatcher.Send(EventId.ActivityLoadClicked, new LoadActivityEventArgs(m_ActivityId));
-            Debug.Log(m_ActivityId);
         }
 
         private static float MetersToKilometers(double meters)

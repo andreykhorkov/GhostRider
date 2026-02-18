@@ -8,8 +8,6 @@ namespace DefaultNamespace.CoordinatesConverter
         Vector3 IGeoCoordinatesConverter.LatLonAltToMeters(double lat, double lon, double alt, double originLat,
             double originLon, double originAlt)
         {
-
-
             var R = 6378137.0; // Earth radius
 
             var dLat = (lat - originLat) * Mathf.Deg2Rad;
