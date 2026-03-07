@@ -26,14 +26,14 @@ namespace DefaultNamespace
         {
             Container.BindInterfacesTo<GhostRiderFacade>().AsSingle().NonLazy();
             Container.BindInterfacesTo<HttpManager>().AsSingle();
-            Container.Bind<ITrackCreator>().FromSubContainerResolve().
-                ByInstaller<StravaTrackCreatorInstaller>().AsSingle();
-            Container.BindInterfacesTo<TrackRenderer>().AsSingle();
+            Container.Bind<ITrackCreator>().FromSubContainerResolve().ByInstaller<StravaTrackCreatorInstaller>()
+                .AsSingle();
             Container.BindInterfacesTo<EnuConverter>().AsSingle();
-            Container.BindInterfacesTo<SelfTrackFollower>().AsSingle();
+            Container.BindInterfacesTo<SelfTrackFollower>().FromSubContainerResolve()
+                .ByInstaller<SelfTrackFollowerInstaller>().AsSingle();
             Container.BindInstance(m_Installables);
-            Container.BindMemoryPool<ITrackFollower, GhostTrackFollower.Pool>().FromSubContainerResolve().
-                ByNewContextPrefab(m_Installables.m_FollowerPrefab);
+            Container.BindMemoryPool<ITrackFollower, GhostTrackFollower.Pool>().FromSubContainerResolve()
+                .ByNewContextPrefab(m_Installables.m_FollowerPrefab);
 
             if (m_IsFake)
             {

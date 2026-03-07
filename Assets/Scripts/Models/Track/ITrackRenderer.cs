@@ -1,7 +1,11 @@
-﻿namespace DefaultNamespace.Track
+﻿using System.Collections.Generic;
+using UnityEngine;
+
+namespace DefaultNamespace.Track
 {
     public interface ITrackRenderer
     {
-        void UpdateTrackTrace(TrackData trackData);
+        void SetTrackData(TrackData trackData);
+        void UpdateVisiblePath(int startIndex);
     }
 }

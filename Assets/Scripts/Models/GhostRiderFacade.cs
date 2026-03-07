@@ -15,7 +15,6 @@ namespace DefaultNamespace
         private readonly Dispatcher m_Dispatcher;
         private readonly IAuthenticator m_Authenticator;
         private readonly IDataProvider m_DataProvider;
-        private readonly ITrackRenderer m_TrackRenderer;
         private readonly ITrackCreator m_trackCreator;
         private readonly GhostTrackFollower.Pool m_TrackFollowerPool;
         private readonly ITrackFollower m_SelfTrackFollower;
@@ -27,13 +26,12 @@ namespace DefaultNamespace
         private string m_AccessToken;
 
         public GhostRiderFacade(Dispatcher dispatcher, IAuthenticator authenticator, IDataProvider dataProvider,
-            ITrackRenderer trackRenderer, ITrackCreator trackCreator, GhostTrackFollower.Pool trackFollowerPool,
+            ITrackCreator trackCreator, GhostTrackFollower.Pool trackFollowerPool,
             ITrackFollower selfTrackFollower)
         {
             m_Dispatcher = dispatcher;
             m_Authenticator = authenticator;
             m_DataProvider = dataProvider;
-            m_TrackRenderer = trackRenderer;
             m_trackCreator = trackCreator;
             m_TrackFollowerPool = trackFollowerPool;
             m_SelfTrackFollower = selfTrackFollower;
@@ -76,7 +74,6 @@ namespace DefaultNamespace
             var activityId = eventArgs.ActivityId;
             var activityGeoData = await LoadActivityInfo(activityId);
             var trackData = m_trackCreator.CreateTrack(activityGeoData);
-            m_TrackRenderer.UpdateTrackTrace(trackData);
             m_Dispatcher.Send(EventId.ActivityTrackCreated, System.EventArgs.Empty);
 
             m_SelfGhost.SetTrack(trackData);
