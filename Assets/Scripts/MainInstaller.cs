@@ -29,8 +29,7 @@ namespace DefaultNamespace
             Container.Bind<ITrackCreator>().FromSubContainerResolve().ByInstaller<StravaTrackCreatorInstaller>()
                 .AsSingle();
             Container.BindInterfacesTo<EnuConverter>().AsSingle();
-            Container.BindInterfacesTo<SelfTrackFollower>().FromSubContainerResolve()
-                .ByInstaller<SelfTrackFollowerInstaller>().AsSingle();
+
             Container.BindInstance(m_Installables);
             Container.BindMemoryPool<ITrackFollower, GhostTrackFollower.Pool>().FromSubContainerResolve()
                 .ByNewContextPrefab(m_Installables.m_FollowerPrefab);
@@ -39,12 +38,18 @@ namespace DefaultNamespace
             {
                 Container.BindInterfacesTo<FakeAuthenticator>().AsSingle();
                 Container.BindInterfacesTo<FakeStravaDataProvider>().AsSingle();
+                Container.BindInterfacesTo<FakeCompass>().AsSingle();
+                Container.BindInterfacesTo<DebugSelfTrackFollower>().FromSubContainerResolve()
+                    .ByInstaller<DebugTrackFollowerInstaller>().WithKernel().AsSingle();
             }
             else
             {
                 Container.BindInterfacesTo<StravaActivityDataLoader>().AsSingle();
                 Container.BindInterfacesTo<StravaAuthenticator>().AsSingle();
                 Container.BindInterfacesTo<StravaDataProvider>().AsSingle();
+                Container.BindInterfacesTo<FakeCompass>().AsSingle();
+                Container.BindInterfacesTo<SelfTrackFollower>().FromSubContainerResolve()
+                    .ByInstaller<SelfTrackFollowerInstaller>().AsSingle();
             }
         }
     }

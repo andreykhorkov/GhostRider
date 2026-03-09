@@ -9,12 +9,16 @@ namespace DefaultNamespace.Track
         private int m_CurrentWaypointIndex;
 
         private readonly Transform m_Transform;
+        private readonly ICompass m_Compass;
 
         public TrackData TrackData { get; private set; }
 
-        public GhostTrackFollower(Transform transform)
+        public Vector3 Position => m_Transform.position;
+
+        public GhostTrackFollower(Transform transform, ICompass compass)
         {
             m_Transform = transform;
+            m_Compass = compass;
         }
 
         void ITickable.Tick()
@@ -43,9 +47,9 @@ namespace DefaultNamespace.Track
                 return;
             }
 
-            var currentTime = TrackData.Time[m_CurrentWaypointIndex];
+            var lastWaypointTime = TrackData.Time[m_CurrentWaypointIndex];
             var nextTime = TrackData.Time[m_CurrentWaypointIndex + 1];
-            var waypointIntervalTime = nextTime - currentTime;
+            var waypointIntervalTime = nextTime - lastWaypointTime;
 
             if (waypointIntervalTime <= 0f)
             {
@@ -53,13 +57,17 @@ namespace DefaultNamespace.Track
                 return;
             }
 
-            var timeOnInterval = m_CurrentTime - currentTime;
+            var timeOnInterval = m_CurrentTime - lastWaypointTime;
             var t = Mathf.Clamp01(timeOnInterval / waypointIntervalTime);
 
-            m_Transform.position = Vector3.Lerp(
+            var followerPos = Vector3.Lerp(
                 TrackData.Waypoints[m_CurrentWaypointIndex],
                 TrackData.Waypoints[m_CurrentWaypointIndex + 1],
                 t);
+
+            PointTransformer.TransformPoint(ref followerPos, m_Compass.NorthDirection);
+
+            m_Transform.position = followerPos;
         }
 
         void ITrackFollower.SetTrack(TrackData trackData)
@@ -69,9 +77,9 @@ namespace DefaultNamespace.Track
             m_CurrentWaypointIndex = 0;
         }
 
-        // public class Factory : PlaceholderFactory<ITrackFollower>
-        // {
-        // }
+        public void SetGhost(ITrackFollower ghost)
+        {
+        }
 
         public class Pool : MemoryPool<ITrackFollower>
         {

@@ -49,6 +49,7 @@ namespace DefaultNamespace
             }
 
             m_SelfGhost = m_TrackFollowerPool.Spawn();
+            m_SelfTrackFollower.SetGhost(m_SelfGhost);
 
             Application.deepLinkActivated += OnDeepLinkActivated;
             m_Dispatcher.Subscribe(EventId.ActivityLoadClicked, OnActivityLoadClicked);

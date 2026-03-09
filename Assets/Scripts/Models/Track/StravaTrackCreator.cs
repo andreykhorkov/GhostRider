@@ -29,7 +29,7 @@ namespace DefaultNamespace.Track
                 times[i] = geoData.Time;
             }
 
-            PointTransformer.TransformPoints(waypoints, m_Compass.NorthDirection);
+            //PointTransformer.TransformPoints(waypoints, m_Compass.NorthDirection);
 
             return new TrackData(waypoints, times, origin);
         }

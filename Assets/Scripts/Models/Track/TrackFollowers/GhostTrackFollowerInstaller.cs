@@ -3,7 +3,7 @@ using Zenject;
 
 namespace DefaultNamespace.Track
 {
-    public class TrackFollowerInstaller : MonoInstaller<TrackFollowerInstaller>
+    public class GhostTrackFollowerInstaller : MonoInstaller<GhostTrackFollowerInstaller>
     {
         public override void InstallBindings()
         {

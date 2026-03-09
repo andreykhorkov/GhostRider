@@ -6,7 +6,6 @@ namespace DefaultNamespace.Track
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesTo<FakeCompass>().AsSingle();
             Container.BindInterfacesTo<StravaTrackCreator>().AsSingle();
         }
     }

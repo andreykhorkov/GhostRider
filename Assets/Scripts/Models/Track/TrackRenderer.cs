@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using MiscTools;
+﻿using MiscTools;
 using UnityEngine;
-using UnityEngine.Profiling;
 using Zenject;
-using Debug = UnityEngine.Debug;
 
 namespace DefaultNamespace.Track
 {
@@ -15,24 +11,24 @@ namespace DefaultNamespace.Track
         private readonly LineRenderer m_LineRenderer;
         private readonly Dispatcher m_Dispatcher;
         private readonly Vector3[] m_PathSubset = new Vector3[k_VisiblePathLength];
+        private readonly ICompass m_Compass;
 
         private TrackData m_TrackData;
 
-        TrackRenderer(MainInstaller.Installables installables, Dispatcher dispatcher)
+        private TrackRenderer(MainInstaller.Installables installables, Dispatcher dispatcher, ICompass compass)
         {
             m_LineRenderer = installables.m_LineRenderer;
             m_Dispatcher = dispatcher;
+            m_Compass = compass;
         }
 
         void ITickable.Tick()
         {
+            m_LineRenderer.transform.rotation = Quaternion.LookRotation(m_Compass.NorthDirection);
         }
-
-        private Stopwatch sw = new Stopwatch();
 
         void ITrackRenderer.UpdateVisiblePath(int startIndex)
         {
-            sw.Restart();
             if (startIndex > m_TrackData.Waypoints.Length - k_VisiblePathLength)
             {
                 return;
@@ -40,7 +36,9 @@ namespace DefaultNamespace.Track
 
             for (var i = 0; i < k_VisiblePathLength; i++)
             {
-                m_PathSubset[i] = m_TrackData.Waypoints[startIndex + i];
+                var point = m_TrackData.Waypoints[startIndex + i];
+                PointTransformer.TransformPoint(ref point, m_Compass.NorthDirection);
+                m_PathSubset[i] = point;
             }
 
             m_LineRenderer.SetPositions(m_PathSubset);

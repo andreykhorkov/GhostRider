@@ -9,7 +9,13 @@ namespace DefaultNamespace.Track
         private readonly Button m_StateButton;
         private readonly Transform m_NorthDirectionTf;
 
-        public Vector3 NorthDirection { get; private set; }
+        public Vector3 NorthDirection
+        {
+            get
+            {
+                return m_NorthDirectionTf.forward;
+            }
+        }
 
         public FakeCompass(MainInstaller.Installables installables, Button button)
         {
@@ -25,8 +31,8 @@ namespace DefaultNamespace.Track
 
         private void SetNorthDirection()
         {
-            var dir = Vector3.ProjectOnPlane(m_NorthDirectionTf.forward, Vector3.up);
-            NorthDirection = dir.normalized;
+            // var dir = Vector3.ProjectOnPlane(m_NorthDirectionTf.forward, Vector3.up);
+            // NorthDirection = dir.normalized;
         }
     }
 }

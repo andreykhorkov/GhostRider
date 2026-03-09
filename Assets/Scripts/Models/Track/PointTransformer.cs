@@ -4,6 +4,20 @@ namespace DefaultNamespace.Track
 {
     public static class PointTransformer
     {
+        public static void TransformPoint(ref Vector3 point, Vector3 direction, Vector3 up = default)
+        {
+            if (up == default)
+            {
+                up = Vector3.up;
+            }
+
+            direction.Normalize();
+            Quaternion rotation = Quaternion.LookRotation(direction, up);
+            Matrix4x4 matrix = Matrix4x4.Rotate(rotation);
+
+            point = matrix.MultiplyPoint3x4(point);
+        }
+
         public static void TransformPoints(Vector3[] points, Vector3 direction, Vector3 up = default)
         {
             if (up == default)

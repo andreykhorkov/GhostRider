@@ -1,5 +1,4 @@
-﻿using System;
-using Zenject;
+﻿using UnityEngine;
 
 namespace DefaultNamespace.Track
 {
@@ -7,5 +6,7 @@ namespace DefaultNamespace.Track
     {
         TrackData TrackData { get; }
         void SetTrack(TrackData trackData);
+        void SetGhost(ITrackFollower ghost);
+        Vector3 Position { get; }
     }
 }

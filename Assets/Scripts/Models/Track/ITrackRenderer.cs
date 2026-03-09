@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-
-namespace DefaultNamespace.Track
+﻿namespace DefaultNamespace.Track
 {
     public interface ITrackRenderer
     {
